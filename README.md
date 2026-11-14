@@ -1,4 +1,4 @@
-# moneo
+# Moneo
 
 A privacy-first personal finance web app built with plain HTML, CSS, and JavaScript.
 
