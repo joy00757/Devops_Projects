@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6f2">
+  <title>moneo — Personal finance, made clear</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="moneo home">
+        <span class="brand-mark"><span></span><span></span><span></span></span>
+        <span>moneo</span>
+      </a>
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-link active" data-view="dashboard"><span class="nav-icon">◫</span>Overview</button>
+        <button class="nav-link" data-view="transactions"><span class="nav-icon">↕</span>Transactions</button>
+        <button class="nav-link" data-view="budgets"><span class="nav-icon">◎</span>Budgets</button>
+        <button class="nav-link" data-view="accounts"><span class="nav-icon">▤</span>Accounts</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="privacy-card">
+          <div class="privacy-icon">✳</div>
+          <strong>Your money stays yours.</strong>
+          <p>Your data is saved only in this browser. Nothing is sent to a server.</p>
+        </div>
+        <button class="profile-button" id="profileButton">
+          <span class="avatar">A</span>
+          <span class="profile-copy"><strong>Alex Morgan</strong><small>Personal space</small></span>
+          <span class="profile-more">···</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-label="Toggle navigation">☰</button>
+        <div class="breadcrumbs"><span>Personal space</span><span class="crumb-slash">/</span><strong id="viewCrumb">Overview</strong></div>
+        <div class="top-actions">
+          <button class="icon-button" id="exportButton" title="Export transactions as CSV" aria-label="Export CSV">⇩</button>
+          <button class="icon-button" id="importButton" title="Import transactions from CSV" aria-label="Import CSV">⇧</button>
+          <button class="button button-dark top-add" id="topAddButton"><span>＋</span> Add transaction</button>
+          <input type="file" id="csvFile" accept=".csv,text/csv" hidden>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="view-panel active" id="dashboardView">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow" id="todayLabel">YOUR FINANCES AT A GLANCE</p>
+              <h1>Good morning, Alex <span class="wave">✳</span></h1>
+              <p class="subheading">Here’s your financial snapshot for <span id="monthHeading"></span>.</p>
+            </div>
+            <label class="month-picker"><span class="sr-only">Choose month</span><span class="calendar-icon">▦</span><input type="month" id="monthPicker"></label>
+          </div>
+
+          <div class="stat-grid">
+            <article class="stat-card balance-card">
+              <div class="stat-top"><span>Total balance</span><span class="stat-icon mint">◈</span></div>
+              <div class="stat-value" id="balanceValue">₹0</div>
+              <div class="stat-foot"><span class="trend up">↗</span><span>Across all accounts</span></div>
+              <div class="balance-sparkline" aria-hidden="true"><svg viewBox="0 0 220 54" preserveAspectRatio="none"><path d="M0 39 C20 36 25 43 43 30 S67 29 81 34 S102 16 120 23 S147 18 160 25 S184 6 197 13 S213 7 220 3" /></svg></div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span>Income</span><span class="stat-icon green">↙</span></div>
+              <div class="stat-value" id="incomeValue">₹0</div>
+              <div class="stat-foot"><span class="foot-muted">Money in this month</span></div>
+              <div class="stat-bar"><span class="bar-income" id="incomeBar"></span></div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span>Expenses</span><span class="stat-icon peach">↗</span></div>
+              <div class="stat-value" id="expenseValue">₹0</div>
+              <div class="stat-foot"><span class="foot-muted">Money out this month</span></div>
+              <div class="stat-bar"><span class="bar-expense" id="expenseBar"></span></div>
+            </article>
+            <article class="stat-card savings-card">
+              <div class="stat-top"><span>Net savings</span><span class="stat-icon lavender">✧</span></div>
+              <div class="stat-value" id="savingsValue">₹0</div>
+              <div class="stat-foot"><span class="savings-rate" id="savingsRate">0%</span><span>of your income</span></div>
+              <div class="savings-dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <section class="card trend-card">
+              <div class="card-heading">
+                <div><h2>Cash flow</h2><p>Your income and expenses over time</p></div>
+                <div class="legend"><span><i class="legend-dot income-dot"></i>Income</span><span><i class="legend-dot expense-dot"></i>Expenses</span></div>
+              </div>
+              <div class="chart-wrap" id="cashFlowChart" aria-label="Six month income and expense chart"></div>
+            </section>
+            <section class="card spending-card">
+              <div class="card-heading">
+                <div><h2>Spending breakdown</h2><p>Where your money went</p></div>
+                <button class="text-button" data-navigate="budgets">See all <span>→</span></button>
+              </div>
+              <div class="donut-layout">
+                <div class="donut" id="spendingDonut"><div class="donut-center"><strong id="donutTotal">₹0</strong><span>spent</span></div></div>
+                <div class="category-legend" id="categoryLegend"></div>
+              </div>
+            </section>
+            <section class="card budget-card">
+              <div class="card-heading">
+                <div><h2>Monthly budgets</h2><p>Keep your spending on track</p></div>
+                <button class="text-button" data-navigate="budgets">Manage <span>→</span></button>
+              </div>
+              <div id="budgetPreview" class="budget-list"></div>
+            </section>
+            <section class="card transactions-card">
+              <div class="card-heading">
+                <div><h2>Recent transactions</h2><p>Your latest money moves</p></div>
+                <button class="text-button" data-navigate="transactions">View all <span>→</span></button>
+              </div>
+              <div id="recentTransactions" class="recent-list"></div>
+            </section>
+          </div>
+          <p class="local-note"><span>✳</span> Your financial data is stored locally on this device.</p>
+        </section>
+
+        <section class="view-panel" id="transactionsView">
+          <div class="page-heading compact-heading">
+            <div><p class="eyebrow">YOUR MONEY, ORGANIZED</p><h1>Transactions</h1><p class="subheading">Every little thing adds up. Keep track of it all.</p></div>
+            <button class="button button-dark" id="transactionsAddButton">＋ Add transaction</button>
+          </div>
+          <section class="card table-card">
+            <div class="table-toolbar">
+              <label class="search-box"><span>⌕</span><input type="search" id="transactionSearch" placeholder="Search transactions..." aria-label="Search transactions"></label>
+              <select id="typeFilter" aria-label="Filter by transaction type"><option value="all">All types</option><option value="expense">Expenses</option><option value="income">Income</option></select>
+              <select id="categoryFilter" aria-label="Filter by category"><option value="all">All categories</option></select>
+              <input type="month" id="transactionMonth" aria-label="Filter by month">
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>TRANSACTION</th><th>CATEGORY</th><th>ACCOUNT</th><th>DATE</th><th class="amount-column">AMOUNT</th><th></th></tr></thead>
+                <tbody id="transactionRows"></tbody>
+              </table>
+              <div id="emptyTransactions" class="empty-state" hidden><span>◷</span><strong>No transactions found</strong><p>Try changing your filters or add a new transaction.</p><button class="button button-dark" data-add-transaction>＋ Add transaction</button></div>
+            </div>
+            <div class="table-footer"><span id="transactionCount">Showing 0 transactions</span><div class="pagination"><button id="prevPage" aria-label="Previous page">←</button><span id="pageIndicator">1</span><button id="nextPage" aria-label="Next page">→</button></div></div>
+          </section>
+        </section>
+
+        <section class="view-panel" id="budgetsView">
+          <div class="page-heading compact-heading">
+            <div><p class="eyebrow">A LITTLE PLAN GOES A LONG WAY</p><h1>Your budgets</h1><p class="subheading">Give every rupee a purpose. Adjust your limits any time.</p></div>
+            <button class="button button-dark" id="setBudgetButton">＋ Set a budget</button>
+          </div>
+          <div class="budget-summary-grid" id="budgetSummary"></div>
+          <section class="card budgets-full-card">
+            <div class="card-heading"><div><h2>Category budgets</h2><p>Monthly limits and spending so far</p></div><span class="month-text" id="budgetMonthLabel"></span></div>
+            <div id="allBudgets" class="all-budgets"></div>
+          </section>
+          <div class="budget-tip"><span>✦</span><div><strong>A small reminder</strong><p>Budgets are guides, not rules. You can update your limits whenever life changes.</p></div></div>
+        </section>
+
+        <section class="view-panel" id="accountsView">
+          <div class="page-heading compact-heading">
+            <div><p class="eyebrow">ALL YOUR MONEY, IN ONE PLACE</p><h1>Accounts</h1><p class="subheading">A clear view of where your money lives.</p></div>
+            <button class="button button-dark" id="addAccountButton">＋ Add account</button>
+          </div>
+          <div class="account-total card"><div><span class="eyebrow">TOTAL NET POSITION</span><h2 id="accountTotal">₹0</h2><p>Across your active accounts</p></div><div class="account-total-icon">◈</div></div>
+          <div class="account-grid" id="accountList"></div>
+          <section class="card data-tools-card"><div><strong>Take your data with you</strong><p>Export a JSON backup, or clear the records saved in this browser.</p></div><div><button class="button button-light" id="jsonExportButton">Export JSON</button><button class="button button-danger" id="clearDataButton">Clear local data</button></div></section>
+          <div class="account-disclaimer">Accounts are manual trackers. This app does not connect to your bank or move money.</div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <button class="floating-add" id="floatingAdd" aria-label="Add transaction">＋</button>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <dialog id="transactionDialog" class="app-dialog">
+    <form id="transactionForm">
+      <div class="dialog-heading"><div><p class="eyebrow">QUICK LOG</p><h2 id="transactionDialogTitle">Add transaction</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Close">×</button></div>
+      <div class="type-toggle"><button type="button" class="type-option selected" data-type="expense">Expense</button><button type="button" class="type-option" data-type="income">Income</button></div>
+      <label class="field-label amount-label">Amount <div class="amount-input"><span>₹</span><input id="transactionAmount" type="number" min="0.01" step="0.01" placeholder="0.00" required autofocus></div></label>
+      <div class="form-grid">
+        <label class="field-label">Category<select id="transactionCategory" required></select></label>
+        <label class="field-label">Account<select id="transactionAccount" required></select></label>
+        <label class="field-label">Date<input id="transactionDate" type="date" required></label>
+        <label class="field-label">Note <input id="transactionNote" type="text" maxlength="120" placeholder="What was it for?"></label>
+      </div>
+      <div class="dialog-actions"><button type="button" class="button button-light" data-close-dialog>Cancel</button><button type="submit" class="button button-dark" id="saveTransactionButton">Save transaction</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="budgetDialog" class="app-dialog small-dialog">
+    <form id="budgetForm">
+      <div class="dialog-heading"><div><p class="eyebrow">MAKE A PLAN</p><h2>Set a monthly budget</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Close">×</button></div>
+      <label class="field-label">Category<select id="budgetCategory"></select></label>
+      <label class="field-label">Monthly limit<div class="amount-input"><span>₹</span><input id="budgetAmount" type="number" min="1" step="1" placeholder="e.g. 10,000" required></div></label>
+      <div class="dialog-actions"><button type="button" class="button button-light" data-close-dialog>Cancel</button><button class="button button-dark" type="submit">Save budget</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="accountDialog" class="app-dialog small-dialog">
+    <form id="accountForm">
+      <div class="dialog-heading"><div><p class="eyebrow">YOUR ACCOUNTS</p><h2>Add an account</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Close">×</button></div>
+      <label class="field-label">Account name<input id="accountName" type="text" maxlength="40" placeholder="e.g. Travel fund" required></label>
+      <label class="field-label">Account type<select id="accountType"><option>Bank account</option><option>Cash</option><option>Credit card</option><option>Wallet</option></select></label>
+      <label class="field-label">Opening balance<div class="amount-input"><span>₹</span><input id="accountOpening" type="number" step="0.01" placeholder="0.00" required></div></label>
+      <div class="dialog-actions"><button type="button" class="button button-light" data-close-dialog>Cancel</button><button class="button button-dark" type="submit">Add account</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="importDialog" class="app-dialog import-dialog">
+    <form id="importForm">
+      <div class="dialog-heading"><div><p class="eyebrow">BRING YOUR DATA ALONG</p><h2>Import transactions</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Close">×</button></div>
+      <p class="dialog-description">Match the columns in your CSV, then preview your data before importing.</p>
+      <div class="mapping-grid" id="mappingFields"></div>
+      <div class="preview-heading"><strong>Preview</strong><span id="previewCount"></span></div>
+      <div class="import-preview" id="importPreview"></div>
+      <label class="duplicate-option"><input id="keepDuplicates" type="checkbox"> Import possible duplicates too</label>
+      <div class="dialog-actions"><button type="button" class="button button-light" data-close-dialog>Cancel</button><button class="button button-dark" id="confirmImportButton" type="submit">Import transactions</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="confirmDialog" class="app-dialog small-dialog">
+    <div class="dialog-heading"><div><p class="eyebrow">A QUICK CHECK</p><h2 id="confirmTitle">Are you sure?</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Close">×</button></div>
+    <p class="dialog-description" id="confirmMessage"></p>
+    <div class="dialog-actions"><button type="button" class="button button-light" data-close-dialog>Cancel</button><button type="button" class="button button-danger" id="confirmAction">Delete</button></div>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>
